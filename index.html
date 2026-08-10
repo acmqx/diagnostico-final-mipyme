@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Final · Ruta MIPYME · Coparmex 2026</title>
+<style>
+/* ── COPARMEX COLORS ──────────────────────────────────────── */
+/* Rojo Coparmex: #0072CE  Azul marino: #003B6F  Gris: #58595B */
+:root{
+  --blue:   #0072CE;
+  --blueL:  #3A9AE8;
+  --blueBg: rgba(0,114,206,.12);
+  --navy:   #003B6F;
+  --navyL:  #1A5A9A;
+  --navyBg: rgba(0,59,111,.2);
+  --gray:   #58595B;
+  --grayL:  #8A8B8D;
+  --light:  #F4F4F4;
+  --white:  #FFFFFF;
+  --dark:   #001F45;
+  --cream:  #F8F6F0;
+  --muted:  #6B6C6E;
+  --green:  #1A7A3C;
+  --greenBg:rgba(26,122,60,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  background:var(--navy);
+  color:var(--cream);
+  font-family:-apple-system,'Segoe UI',sans-serif;
+  min-height:100vh;
+  padding-bottom:60px;
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.header{
+  background:var(--navy);
+  border-bottom:3px solid var(--blue);
+  padding:14px 20px;
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-logo{font-size:15px;font-weight:800;color:var(--white);letter-spacing:.04em;}
+.header-logo span{color:var(--blue);}
+.header-sub{font-size:11px;color:rgba(255,255,255,.6);}
+
+/* ── SCREENS ─────────────────────────────────────────────── */
+.screen{display:none;max-width:560px;margin:0 auto;padding:24px 20px;}
+.screen.active{display:block;}
+
+/* ── COVER ───────────────────────────────────────────────── */
+.cop-tag{
+  display:inline-block;font-size:10px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--blue);
+  background:var(--blueBg);border:1px solid rgba(0,114,206,.4);
+  border-radius:20px;padding:4px 14px;margin-bottom:18px;
+}
+h1{font-size:28px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:10px;font-family:Georgia,serif;}
+h1 span{color:var(--blue);}
+.desc{font-size:14px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:20px;}
+.anon-note{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--navyBg);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:12px 14px;margin-bottom:22px;
+}
+.anon-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.anon-text{font-size:12px;color:rgba(255,255,255,.7);line-height:1.6;}
+.anon-text strong{color:var(--white);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.chip{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;
+}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.chip-name{font-size:12px;font-weight:700;color:var(--white);}
+.chip-sub{font-size:10px;color:rgba(255,255,255,.5);}
+
+/* ── BOTONES ─────────────────────────────────────────────── */
+.btn{
+  width:100%;padding:15px;font-size:15px;font-weight:800;
+  background:var(--blue);color:var(--white);
+  border:none;border-radius:10px;cursor:pointer;
+  transition:background .15s;letter-spacing:.01em;
+}
+.btn:hover{background:var(--blueL);}
+.btn:active{opacity:.88;}
+.btn-navy{background:var(--navy);}
+.btn-navy:hover{background:var(--navyL);}
+
+/* ── PROGRESS ────────────────────────────────────────────── */
+.prog-wrap{margin-bottom:20px;}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:8px;}
+.prog-label{font-size:12px;color:rgba(255,255,255,.6);}
+.prog-eje{font-size:12px;font-weight:700;}
+.prog-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .3s;}
+
+/* ── SECCIÓN TAG ─────────────────────────────────────────── */
+.section-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;margin-bottom:14px;
+}
+.sdot{width:7px;height:7px;border-radius:50%;}
+
+/* ── PREGUNTA ────────────────────────────────────────────── */
+.qnum{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px;}
+.qtext{
+  font-size:17px;font-weight:700;color:var(--white);
+  line-height:1.5;margin-bottom:20px;font-family:Georgia,serif;
+}
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 16px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:border-color .12s,background .12s;
+}
+.opt:hover{background:rgba(255,255,255,.08);}
+.opt.sel{border-color:var(--blue);background:rgba(0,114,206,.12);}
+.opt.correct{border-color:var(--green);background:var(--greenBg);}
+.opt.wrong{border-color:#E24B4A;background:rgba(226,75,74,.1);}
+.oletter{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:rgba(255,255,255,.6);
+  flex-shrink:0;margin-top:1px;
+}
+.opt.sel .oletter{background:var(--blue);color:var(--white);border-color:var(--blue);}
+.opt.correct .oletter{background:var(--green);color:var(--white);border-color:var(--green);}
+.opt.wrong .oletter{background:#E24B4A;color:var(--white);border-color:#E24B4A;}
+.otext{font-size:13px;color:rgba(255,255,255,.7);line-height:1.55;}
+.opt.sel .otext,.opt.correct .otext,.opt.wrong .otext{color:var(--white);}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+.nav{display:flex;gap:10px;}
+.btn-back{
+  flex:0 0 auto;padding:13px 20px;font-size:13px;font-weight:700;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;color:rgba(255,255,255,.7);cursor:pointer;
+}
+.btn-back:disabled{opacity:.3;cursor:default;}
+.btn-fwd{
+  flex:1;padding:13px;font-size:14px;font-weight:800;
+  background:var(--blue);color:var(--white);border:none;border-radius:8px;cursor:pointer;
+}
+.btn-fwd:hover{background:var(--blueL);}
+
+/* ── SPINNER ─────────────────────────────────────────────── */
+.spin-wrap{text-align:center;padding:80px 20px;}
+.spinner{
+  width:28px;height:28px;
+  border:3px solid rgba(0,114,206,.3);border-top-color:var(--blue);
+  border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── COPARMEX QUESTION ───────────────────────────────────── */
+.cop-divider{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.cop-line{flex:1;height:1px;background:rgba(255,255,255,.1);}
+.cop-badge{
+  font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--white);background:var(--navyL);
+  border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;white-space:nowrap;
+}
+.cop-intro{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:16px;}
+.cop-q{font-size:16px;font-weight:700;color:var(--white);font-family:Georgia,serif;line-height:1.5;margin-bottom:14px;}
+textarea{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);border-radius:8px;
+  color:var(--white);font-size:14px;padding:14px 16px;
+  outline:none;resize:vertical;min-height:110px;
+  font-family:-apple-system,'Segoe UI',sans-serif;line-height:1.6;
+}
+textarea:focus{border-color:var(--blue);}
+textarea::placeholder{color:rgba(255,255,255,.35);}
+.cop-skip{text-align:center;margin-top:10px;}
+.cop-skip a{font-size:12px;color:rgba(255,255,255,.5);cursor:pointer;text-decoration:underline;}
+
+/* ── RESULTS ─────────────────────────────────────────────── */
+.res-hero{text-align:center;padding:20px 0 16px;}
+.res-anon{
+  font-size:11px;color:rgba(255,255,255,.6);
+  background:rgba(255,255,255,.06);border-radius:20px;
+  padding:4px 14px;display:inline-block;margin-bottom:10px;
+}
+.res-hero h2{font-size:24px;font-weight:800;color:var(--white);font-family:Georgia,serif;margin-bottom:4px;}
+.res-hero p{font-size:13px;color:rgba(255,255,255,.6);}
+
+/* Calificación de conocimiento */
+.cal-card{
+  background:var(--navyBg);border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:18px;margin-bottom:16px;text-align:center;
+}
+.cal-num{font-size:48px;font-weight:800;color:var(--white);font-family:Georgia,serif;}
+.cal-den{font-size:18px;color:rgba(255,255,255,.5);}
+.cal-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+.cal-bar-track{height:8px;background:rgba(255,255,255,.1);border-radius:4px;margin:12px 0 8px;overflow:hidden;}
+.cal-bar-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+
+.ecards{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.ecard{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:16px;
+}
+.ecard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ecard-name{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--white);}
+.escore{font-size:13px;font-weight:800;padding:3px 12px;border-radius:20px;}
+.bar-track{height:5px;background:rgba(255,255,255,.08);border-radius:3px;margin-bottom:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;}
+.insight{font-size:12px;color:rgba(255,255,255,.6);line-height:1.6;}
+
+.perfil{
+  background:var(--blueBg);border:1px solid rgba(0,114,206,.35);
+  border-radius:10px;padding:16px;margin-bottom:16px;
+}
+.perfil h3{font-size:15px;font-weight:700;color:var(--blue);margin-bottom:6px;}
+.perfil p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.65;}
+
+.cap-box{
+  background:rgba(0,59,111,.3);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:16px;margin-bottom:16px;
+}
+.cap-title{
+  font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);margin-bottom:14px;
+}
+.cap-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.cap-item:last-child{border-bottom:none;padding-bottom:0;}
+.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ctext{font-size:12px;color:rgba(255,255,255,.65);line-height:1.55;}
+.ctext strong{color:var(--white);}
+
+.status{text-align:center;font-size:13px;color:rgba(255,255,255,.5);padding:12px;margin-bottom:12px;}
+.status.ok{color:#52B788;}
+.status.err{color:#E24B4A;}
+.btn-restart{
+  width:100%;padding:13px;font-size:14px;font-weight:700;
+  background:rgba(255,255,255,.08);color:var(--white);
+  border:1px solid rgba(255,255,255,.15);border-radius:10px;cursor:pointer;
+}
+.btn-restart:hover{background:rgba(255,255,255,.12);}
+
+/* ── SEPARADOR DE SECCIÓN ────────────────────────────────── */
+.section-divider{
+  text-align:center;padding:20px 0 10px;
+}
+.section-divider p{
+  font-size:13px;font-weight:700;color:var(--blue);
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.section-divider small{
+  font-size:12px;color:rgba(255,255,255,.5);display:block;margin-top:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo" style="color:var(--white)">RUTA <span style="color:var(--blue)">MIPYME</span></div>
+    <div class="header-sub">Coparmex · Diagnóstico Final 2026</div>
+  </div>
+</div>
+
+<!-- PORTADA -->
+<div class="screen active" id="s-cover">
+  <div style="padding-top:20px">
+    <div class="cop-tag">Diagnóstico final del programa</div>
+    <h1>¿Cuánto creció<br><span>tu empresa?</span></h1>
+    <p class="desc">25 preguntas · ~12 minutos · Resultados inmediatos.<br>20 de diagnóstico por eje + 5 de conocimiento adquirido.</p>
+    <div class="anon-note">
+      <div class="anon-icon">🔒</div>
+      <div class="anon-text"><strong>Diagnóstico anónimo.</strong> Tus respuestas son confidenciales y se procesan de forma agregada. Nadie verá tus respuestas individuales. Sé honesto — este resultado muestra tu avance real.</div>
+    </div>
+    <div class="grid2">
+      <div class="chip"><div class="dot" style="background:#52B788"></div><div><div class="chip-name">Estructura</div><div class="chip-sub">5 preguntas</div></div></div>
+      <div class="chip"><div class="dot" style="background:#4895D4"></div><div><div class="chip-name">Tecnología</div><div class="chip-sub">5 preguntas</div></div></div>
+      <div class="chip"><div class="dot" style="background:#D4702A"></div><div><div class="chip-name">Finanzas</div><div class="chip-sub">5 preguntas</div></div></div>
+      <div class="chip"><div class="dot" style="background:#9B5FD4"></div><div><div class="chip-name">Vinculación</div><div class="chip-sub">5 preguntas</div></div></div>
+      <div class="chip" style="grid-column:span 2;background:rgba(0,114,206,.12);border-color:rgba(0,114,206,.3);">
+        <div class="dot" style="background:#0072CE"></div>
+        <div><div class="chip-name" style="color:#3A9AE8">Conocimiento Ruta MIPYME</div><div class="chip-sub">5 preguntas calificadas</div></div>
+      </div>
+    </div>
+    <button class="btn" id="btn-start">Comenzar diagnóstico final →</button>
+  </div>
+</div>
+
+<!-- PREGUNTAS -->
+<div class="screen" id="s-quiz">
+  <div class="prog-wrap">
+    <div class="prog-meta">
+      <span class="prog-label" id="prog-label">Pregunta 1 de 25</span>
+      <span class="prog-eje" id="prog-eje"></span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:4%"></div></div>
+  </div>
+  <div id="section-notice" style="display:none" class="section-divider">
+    <p style="color:var(--blue)">🎓 Sección de conocimiento</p>
+    <small>Las siguientes 5 preguntas evalúan lo aprendido en la Ruta MIPYME</small>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav">
+    <button class="btn-back" id="btn-prev">← Anterior</button>
+    <button class="btn-fwd" id="btn-next">Siguiente →</button>
+  </div>
+</div>
+
+<!-- PREGUNTA COPARMEX -->
+<div class="screen" id="s-coparmex">
+  <div style="padding-top:16px">
+    <div class="cop-divider">
+      <div class="cop-line"></div>
+      <div class="cop-badge">Ruta MIPYME</div>
+      <div class="cop-line"></div>
+    </div>
+    <p class="cop-intro">Una última pregunta, completamente anónima. Tu respuesta nos ayuda a mejorar el programa para los siguientes ciclos.</p>
+    <div class="cop-q">¿Qué fue lo más valioso que te llevaste de la Ruta MIPYME?</div>
+    <textarea id="coparmex-resp" placeholder="Escribe tu respuesta aquí... (opcional)"></textarea>
+    <div style="margin-top:16px">
+      <button class="btn" id="btn-coparmex-send">Ver mis resultados →</button>
+    </div>
+    <div class="cop-skip"><a id="btn-coparmex-skip">Omitir esta pregunta</a></div>
+  </div>
+</div>
+
+<!-- ENVIANDO -->
+<div class="screen" id="s-sending">
+  <div class="spin-wrap">
+    <div class="spinner"></div>
+    <p style="font-size:14px;color:rgba(255,255,255,.6)">Calculando tus resultados…</p>
+  </div>
+</div>
+
+<!-- RESULTADOS -->
+<div class="screen" id="s-results">
+  <div class="res-hero">
+    <div class="res-anon">Diagnóstico anónimo · Final de programa</div>
+    <h2>Tu diagnóstico final</h2>
+    <p>Comparado con tu punto de partida al inicio de la Ruta</p>
+  </div>
+
+  <!-- Calificación de conocimiento -->
+  <div class="cal-card" id="cal-card"></div>
+
+  <!-- Scores por eje -->
+  <div class="ecards" id="ecards"></div>
+  <div class="perfil" id="perfil"></div>
+  <div class="cap-box" id="capbox"></div>
+  <div class="status" id="save-status"></div>
+  <button class="btn-restart" id="btn-restart">Hacer el diagnóstico de nuevo</button>
+</div>
+
+<script>
+var APPS_URL = "PEGA_AQUI_TU_NUEVA_URL_DE_APPS_SCRIPT";
+
+// ── EJES ──────────────────────────────────────────────────
+var EJES = [
+  {id:'est', name:'Estructura',  color:'#52B788', bg:'#1A3A2A'},
+  {id:'tec', name:'Tecnología',  color:'#4895D4', bg:'#0F2A45'},
+  {id:'fin', name:'Finanzas',    color:'#D4702A', bg:'#3A1F0A'},
+  {id:'net', name:'Vinculación', color:'#9B5FD4', bg:'#2A1545'}
+];
+
+// ── PREGUNTAS DIAGNÓSTICO (20) + CONOCIMIENTO (5) ─────────
+var QS = [
+  // ESTRUCTURA (0-4)
+  {e:0,k:false,t:'¿Cómo tomas decisiones en tu negocio?',
+   o:['Dependiendo de lo que pasa en el día a día','Principalmente por experiencia','Mezcla de datos y experiencia','Con base en datos claros y reportes'],p:[0,1,2,3],c:3},
+  {e:0,k:false,t:'¿Qué tan definidos están tus procesos clave (ventas, compras, operación)?',
+   o:['Cada área lo hace diferente','Parciales o inconsistentes','Definidos pero no documentados','Documentados y estandarizados'],p:[0,1,2,3],c:3},
+  {e:0,k:false,t:'¿Qué tan dependiente es el negocio de ti?',
+   o:['Necesito estar presente para todo','Depende de mí frecuentemente','Intervengo en decisiones clave','Funciona sin mí en la operación diaria'],p:[0,1,2,3],c:3},
+  {e:0,k:false,t:'¿Cómo controlas inventarios o servicios?',
+   o:['No cuento con un control claro','Registros manuales','Control parcial con herramientas básicas','Sistema confiable y actualizado'],p:[0,1,2,3],c:3},
+  {e:0,k:false,t:'¿Tienes claridad sobre tu rentabilidad real?',
+   o:['No tengo claridad al respecto','Tengo una idea aproximada','Conozco la rentabilidad general del negocio','Sí, la tengo por producto o cliente'],p:[0,1,2,3],c:3},
+  // TECNOLOGÍA (5-9)
+  {e:1,k:false,t:'¿Cómo decides implementar nuevas ideas o cambios en tu negocio?',
+   o:['No implemento cambios frecuentemente','Basado en intuición','Probando con algunos riesgos calculados','Con análisis previo y pruebas controladas'],p:[0,1,2,3],c:3},
+  {e:1,k:false,t:'¿Qué tan seguido mejoras tu oferta de producto o servicio?',
+   o:['Casi nunca','Esporádicamente','De forma periódica','Constantemente, con base en retroalimentación del cliente'],p:[0,1,2,3],c:3},
+  {e:1,k:false,t:'¿Cómo integras tecnología en tu negocio?',
+   o:['No utilizo tecnología relevante','Uso herramientas aisladas sin conexión entre sí','Uso herramientas básicas de manera regular','La tecnología está alineada a objetivos claros de negocio'],p:[0,1,2,3],c:3},
+  {e:1,k:false,t:'¿Qué tan conectado estás con las tendencias de tu industria?',
+   o:['Espero a que las tendencias maduren por sí solas','Las escucho pero no he realizado cambios','Estoy informado aunque con poca ejecución','Muy actualizado y aplicando cambios concretos'],p:[0,1,2,3],c:3},
+  {e:1,k:false,t:'¿Cómo validas si una nueva idea o cambio funcionó?',
+   o:['No se valida formalmente','Por percepción general','Con resultados generales del negocio','Con métricas claras definidas antes del cambio'],p:[0,1,2,3],c:3},
+  // FINANZAS (10-14)
+  {e:2,k:false,t:'¿Cómo gestionas el flujo de efectivo de tu empresa?',
+   o:['Cada día es diferente, opero al día','De forma reactiva cuando hay problema','Con control mensual básico','Planeado y proyectado con anticipación'],p:[0,1,2,3],c:3},
+  {e:2,k:false,t:'¿Tienes acceso a financiamiento formal para tu empresa?',
+   o:['No tengo acceso','Es de difícil acceso','Sí, aunque limitado','Sí, con condiciones favorables y lo uso estratégicamente'],p:[0,1,2,3],c:3},
+  {e:2,k:false,t:'¿Cómo defines los precios de tus productos o servicios?',
+   o:['De forma intuitiva','Basado en lo que cobra la competencia','Basado en el mercado general','Basado en costos reales + margen + valor de mercado'],p:[0,1,2,3],c:3},
+  {e:2,k:false,t:'¿Qué tan claro tienes tus costos reales de operación?',
+   o:['No los tengo claros','Los conozco de forma parcial','Tengo una visión general','Los tengo detallados y actualizados'],p:[0,1,2,3],c:3},
+  {e:2,k:false,t:'¿Cómo manejas las inversiones en tu negocio?',
+   o:['No hay planeación de inversión','Son reactivas según la necesidad','Las analizo con criterio básico','Las planeo y evalúo antes de comprometer recursos'],p:[0,1,2,3],c:3},
+  // VINCULACIÓN (15-19)
+  {e:3,k:false,t:'¿Cómo generas relaciones de negocio?',
+   o:['No hago relaciones de forma activa','A través de contactos informales','Con participación ocasional en eventos','Con una estrategia clara y constante'],p:[0,1,2,3],c:3},
+  {e:3,k:false,t:'¿Qué tanto conviertes relaciones en negocio concreto?',
+   o:['No sucede','Es bajo','Es moderado','Es alto y puedo medirlo'],p:[0,1,2,3],c:3},
+  {e:3,k:false,t:'¿Participas activamente en comunidades empresariales?',
+   o:['No participo','Solo asisto sin involucrarme','Participación ocasional','Activo, generando valor para otros miembros'],p:[0,1,2,3],c:3},
+  {e:3,k:false,t:'¿Cómo eliges con quién relacionarte profesionalmente?',
+   o:['Sin criterio definido','Por recomendación de alguien más','Por oportunidad cuando se presenta','Con una estrategia clara de con quién y para qué'],p:[0,1,2,3],c:3},
+  {e:3,k:false,t:'¿Qué tan seguido generas nuevas oportunidades de negocio desde tu red?',
+   o:['Rara vez','De forma esporádica','Con frecuencia','De manera constante y medible'],p:[0,1,2,3],c:3},
+  // CONOCIMIENTO RUTA MIPYME (20-24) — k:true, c = índice correcto
+  {e:4,k:true,t:'Una empresa tiene un segmento de clientes premium, pero su propuesta de valor se basa en precios bajos. ¿Qué bloque del Canvas debe ajustarse prioritariamente?',
+   o:['Estructura de costos','Relación con clientes','Propuesta de valor','Canales'],p:[0,0,1,0],c:2},
+  {e:4,k:true,t:'¿Cuál es una de las principales razones por las que una MiPyME pierde dinero sin darse cuenta?',
+   o:['No publicar suficiente contenido','No tener oficina física','Falta de control y visibilidad sobre costos y operación','Tener pocos proveedores'],p:[0,0,1,0],c:2},
+  {e:4,k:true,t:'¿Cada cuánto das seguimiento a un nuevo contacto después de conocerlo?',
+   o:['El mismo día o al día siguiente','Durante la primera semana','Dentro del primer mes','Generalmente no doy seguimiento'],p:[1,0,0,0],c:0},
+  {e:4,k:true,t:'¿Cuál es la señal más clara de que un proceso ya está listo para delegarse?',
+   o:['Llevas más de 5 años haciéndolo','Cualquier persona puede ejecutarlo bien siguiendo las instrucciones escritas','El proceso tarda menos de 10 minutos','Lo has explicado verbalmente más de 3 veces'],p:[0,1,0,0],c:1},
+  {e:4,k:true,t:'La responsabilidad de los accionistas de una empresa es:',
+   o:['Primordial a la responsabilidad de la empresa','Solidaria y subsidiaria','No tienen responsabilidad','Exclusivamente administrativa'],p:[0,1,0,0],c:1},
+];
+
+var INSIGHTS = {
+  est:['Área urgente. Sin procesos definidos, el crecimiento te va a abrumar antes de que llegue.','Intuición sin estructura capturada. Si alguien clave sale, el conocimiento se va con él.','Estructura en proceso. Formaliza lo que ya sabes que funciona.','Organización madura. Tu reto: escalar sin perder la agilidad que te hace competitivo.'],
+  tec:['Alto riesgo de quedarte atrás. Una herramienta de IA básica puede cambiar tu operación hoy.','Curiosidad sin hábito. Elige una herramienta y úsala 30 días consecutivos.','Innovación reactiva. Anticípate al mercado, no solo respondas.','Mentalidad innovadora activa. Comparte lo aprendido con otros socios.'],
+  fin:['Área crítica. Separar finanzas personales y empresariales es el primer paso.','Conciencia sin estructura. Calcula tu punto de equilibrio real esta semana.','En construcción. Siguiente nivel: proyecciones de flujo y costeo por producto.','Finanzas sólidas. Usa instrumentos financieros de forma más estratégica.'],
+  net:['Tu red aún no trabaja para ti. Relaciones intencionales lo cambian en meses.','Potencial sin sistema. Un proceso de seguimiento post-evento mejora los resultados.','Red funcional sin optimizar. Formaliza tus alianzas clave.','Red estratégica real. Sé el conector que multiplica el valor de Coparmex.']
+};
+var CAP_DESC = {
+  est:'Prioridad: documentación de procesos, definición de roles y autonomía operativa.',
+  tec:'Prioridad: herramientas de IA aplicadas, presencia digital y métricas de cliente.',
+  fin:'Prioridad: flujo de efectivo proyectado y punto de equilibrio documentado.',
+  net:'Prioridad: pitch efectivo, seguimiento post-evento y alianzas formales.'
+};
+
+var cur = 0;
+var answers = new Array(25).fill(null);
+var coparmexResp = '';
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+document.getElementById('btn-start').addEventListener('click', function(){
+  cur=0; answers=new Array(25).fill(null); coparmexResp='';
+  goTo('s-quiz'); renderQ();
+});
+document.getElementById('btn-prev').addEventListener('click', function(){
+  if(cur>0){cur--;renderQ();}
+});
+document.getElementById('btn-next').addEventListener('click', function(){
+  if(answers[cur]===null){
+    document.querySelectorAll('.opt').forEach(function(o){
+      o.style.borderColor='#E24B4A';
+      setTimeout(function(){o.style.borderColor='';},900);
+    });return;
+  }
+  if(cur<24){cur++;renderQ();}
+  else{goTo('s-coparmex');}
+});
+document.getElementById('btn-coparmex-send').addEventListener('click', function(){
+  coparmexResp=document.getElementById('coparmex-resp').value.trim();
+  sendAndShow();
+});
+document.getElementById('btn-coparmex-skip').addEventListener('click', function(){
+  coparmexResp=''; sendAndShow();
+});
+document.getElementById('btn-restart').addEventListener('click', function(){
+  cur=0;answers=new Array(25).fill(null);coparmexResp='';
+  document.getElementById('coparmex-resp').value='';
+  goTo('s-cover');
+});
+
+function renderQ(){
+  var q=QS[cur];
+  var isKnow=(q.e===4);
+  var ejeName=isKnow?'Conocimiento':EJES[q.e].name;
+  var ejeColor=isKnow?'#0072CE':EJES[q.e].color;
+  var ejeBg=isKnow?'rgba(0,114,206,.15)':EJES[q.e].bg;
+
+  // Mostrar aviso de sección de conocimiento al llegar a p21
+  document.getElementById('section-notice').style.display = (cur===20)?'block':'none';
+
+  document.getElementById('prog-label').textContent='Pregunta '+(cur+1)+' de 25';
+  document.getElementById('prog-eje').textContent=ejeName;
+  document.getElementById('prog-eje').style.color=ejeColor;
+  document.getElementById('prog-fill').style.width=Math.round(((cur+1)/25)*100)+'%';
+  document.getElementById('btn-prev').disabled=(cur===0);
+  document.getElementById('btn-next').textContent=cur===24?'Continuar →':'Siguiente →';
+
+  var letters=['A','B','C','D'];
+  var html='<div class="section-tag" style="color:'+ejeColor+';background:'+ejeBg+';border:1px solid '+ejeColor+'40">'
+    +'<div class="sdot" style="background:'+ejeColor+'"></div>'
+    +ejeName+(isKnow?' · Conocimiento adquirido':'')
+    +'</div>';
+  html+='<div class="qnum">Pregunta '+(cur+1)+' de 25'+(isKnow?' <span style="color:#0072CE;font-weight:700"> · Calificada</span>':'')+'</div>';
+  html+='<div class="qtext">'+q.t+'</div>';
+  html+='<div class="opts">';
+  for(var i=0;i<q.o.length;i++){
+    var sel=answers[cur]===i?' sel':'';
+    html+='<div class="opt'+sel+'" data-i="'+i+'"><div class="oletter">'+letters[i]+'</div><div class="otext">'+q.o[i]+'</div></div>';
+  }
+  html+='</div>';
+  document.getElementById('q-area').innerHTML=html;
+
+  document.querySelectorAll('.opt').forEach(function(el){
+    el.addEventListener('click',function(){
+      answers[cur]=parseInt(this.getAttribute('data-i'));
+      renderQ();
+      setTimeout(function(){
+        if(cur<24){cur++;renderQ();}
+        else{goTo('s-coparmex');}
+      },400);
+    });
+  });
+}
+
+function getScores(){
+  var sums=[0,0,0,0],maxes=[0,0,0,0];
+  for(var i=0;i<20;i++){
+    maxes[QS[i].e]+=3;
+    if(answers[i]!==null) sums[QS[i].e]+=QS[i].p[answers[i]];
+  }
+  return sums.map(function(s,i){return Math.round((s/maxes[i])*100);});
+}
+
+function getKnowScore(){
+  var correct=0;
+  for(var i=20;i<25;i++){
+    if(answers[i]!==null && answers[i]===QS[i].c) correct++;
+  }
+  return correct;
+}
+
+function sendAndShow(){
+  goTo('s-sending');
+  var scores=getScores();
+  var knowScore=getKnowScore();
+  var ts=new Date().toLocaleString('es-MX',{timeZone:'America/Mexico_City'});
+  var promedio=Math.round(scores.reduce(function(a,b){return a+b;},0)/4);
+  var params='timestamp='+encodeURIComponent(ts)
+    +'&nombre='+encodeURIComponent('Anónimo')
+    +'&empresa='+encodeURIComponent('—')
+    +'&score_est='+scores[0]+'&score_tec='+scores[1]
+    +'&score_fin='+scores[2]+'&score_net='+scores[3]
+    +'&promedio='+promedio
+    +'&conocimiento='+knowScore
+    +'&coparmex='+encodeURIComponent(coparmexResp);
+  for(var i=0;i<25;i++) params+='&r'+(i+1)+'='+(answers[i]!==null?answers[i]:'');
+
+  var img=new Image();
+  img.src=APPS_URL+'?'+params;
+  img.onload=img.onerror=function(){renderResults(scores,knowScore);goTo('s-results');};
+  setTimeout(function(){
+    if(document.getElementById('s-sending').classList.contains('active')){
+      renderResults(scores,knowScore);goTo('s-results');
+    }
+  },3000);
+}
+
+function renderResults(scores,knowScore){
+  // Calificación de conocimiento
+  var pct=Math.round((knowScore/5)*100);
+  var barColor=pct>=80?'#52B788':pct>=60?'#D4702A':'#0072CE';
+  var calLabel=pct>=80?'Excelente dominio del programa 🎉':pct>=60?'Buen avance — sigue practicando':'Área de oportunidad — repasa los materiales';
+  document.getElementById('cal-card').innerHTML=
+    '<div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;">Conocimiento Ruta MIPYME</div>'
+    +'<div><span class="cal-num">'+knowScore+'</span><span class="cal-den"> / 5</span></div>'
+    +'<div class="cal-label">'+calLabel+'</div>'
+    +'<div class="cal-bar-track"><div class="cal-bar-fill" style="width:'+pct+'%;background:'+barColor+'"></div></div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,.4);">'+pct+'% de respuestas correctas</div>';
+
+  // Scores por eje
+  var html='';
+  for(var i=0;i<EJES.length;i++){
+    var eje=EJES[i],s=scores[i];
+    var lvl=s<30?0:s<60?1:s<85?2:3;
+    html+='<div class="ecard">'
+      +'<div class="ecard-top">'
+      +'<div class="ecard-name"><div class="dot" style="background:'+eje.color+'"></div>'+eje.name+'</div>'
+      +'<span class="escore" style="background:'+eje.bg+';color:'+eje.color+'">'+s+'/100</span>'
+      +'</div>'
+      +'<div class="bar-track"><div class="bar-fill" style="width:'+s+'%;background:'+eje.color+'"></div></div>'
+      +'<div class="insight">'+INSIGHTS[eje.id][lvl]+'</div>'
+      +'</div>';
+  }
+  document.getElementById('ecards').innerHTML=html;
+
+  var avg=Math.round(scores.reduce(function(a,b){return a+b;},0)/4);
+  var pt,pd;
+  if(avg<30){pt='Empresa en arranque estructural';pd='Tu empresa funciona por intuición y esfuerzo personal. El programa te dio bases para crecer sin depender solo de ti.';}
+  else if(avg<55){pt='Empresa en transición';pd='Tienes experiencia y estructura básica, pero hay brechas que frenan tu crecimiento. La Ruta te dio herramientas para cerrarlas.';}
+  else if(avg<75){pt='Empresa con bases sólidas';pd='Tu empresa funciona bien. El valor ahora está en afinar los ejes con menor puntaje y en las conexiones estratégicas.';}
+  else{pt='Empresa profesionalizada';pd='Tienes una operación madura. Tu mayor aportación al ecosistema será compartir lo que aprendiste en el programa.';}
+  document.getElementById('perfil').innerHTML='<h3>'+pt+'</h3><p>'+pd+'</p>';
+
+  var sorted=scores.map(function(s,i){return {eje:EJES[i],score:s};}).sort(function(a,b){return a.score-b.score;}).slice(0,3);
+  var capHtml='<div class="cap-title">Áreas de enfoque prioritario</div>';
+  sorted.forEach(function(f){
+    capHtml+='<div class="cap-item"><div class="cdot" style="background:'+f.eje.color+'"></div>'
+      +'<div class="ctext"><strong>'+f.eje.name+' — '+f.score+'/100</strong><br>'+CAP_DESC[f.eje.id]+'</div></div>';
+  });
+  document.getElementById('capbox').innerHTML=capHtml;
+  document.getElementById('save-status').textContent='✓ Respuestas guardadas de forma anónima';
+  document.getElementById('save-status').className='status ok';
+}
+</script>
+</body>
+</html>
